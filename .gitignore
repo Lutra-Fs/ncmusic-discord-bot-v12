@@ -117,3 +117,5 @@ dist
 
 #temp dis token
 config.json
+
+.idea/
