@@ -20,13 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de498626-c7c4-4a00-8675-b36bddd38190" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/netease-cloud-music-discord-bot.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -84,6 +78,7 @@
       <updated>1596294752313</updated>
       <workItem from="1596294755125" duration="3404000" />
       <workItem from="1600478869352" duration="259000" />
+      <workItem from="1600479182869" duration="550000" />
     </task>
     <servers />
   </component>
@@ -108,5 +103,13 @@
     </state>
     <state x="461" y="184" key="SettingsEditor/-1920.0.1536.864/0.0.1920.1080@0.0.1920.1080" timestamp="1600479121510" />
     <state x="461" y="184" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1596295616238" />
+    <state x="360" y="140" width="1200" height="800" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1600479662897">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="360" y="140" width="1200" height="800" key="com.intellij.history.integration.ui.views.FileHistoryDialog/-1920.0.1536.864/0.0.1920.1080@0.0.1920.1080" timestamp="1600479662897" />
+    <state x="773" y="453" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1600479241990">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="773" y="453" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-1920.0.1536.864/0.0.1920.1080@0.0.1920.1080" timestamp="1600479241990" />
   </component>
 </project>
