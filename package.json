@@ -1,0 +1,8 @@
+{
+  "name": "netease-cloud-music-discord-bot",
+  "version": "1.0.0",
+  "dependencies": {
+    "NeteaseCloudMusicApi": "^3.40.1",
+    "discord.js": "^12.3.1"
+  }
+}
