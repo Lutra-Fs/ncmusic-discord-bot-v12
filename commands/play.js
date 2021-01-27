@@ -1,25 +1,28 @@
-const ncmApi=require('NeteaseCloudMusicApi');
+const ncmApi = require('NeteaseCloudMusicApi');
 
 module.exports = {
   name: 'play',
   description: 'Play a song from ncm.',
-  aliases:['p'],
-  async execute(message, args) {
+  aliases: ['p'],
+  async execute(message, args,stack,current_song_id) {
+    //search the song in ncm
+    let search_result = await ncmApi.search({keywords: args.join(" "), limit: 1});
+    let target_song_id = (await search_result).body.result.songs[0].id;
+    let song_link = await ncmApi.song_url({id: target_song_id});
+    let song_info = await ncmApi.song_detail(
+        {ids: target_song_id.toString()});
     // Create a dispatcher
-    if (message.member.voice.channel) {
+    if (message.member.voice.channel&&current_song_id===null) {
       const connection = await message.member.voice.channel.join();
-      let search_result = await ncmApi.search({keywords: args[0], limit: 1});
-      let target_song_id = (await search_result).body.result.songs[0].id;
-      let song_link = await ncmApi.song_url({id: target_song_id});
       console.log(song_link.body.data[0].url);
 
       const dispatcher = connection.play(song_link.body.data[0].url);
       const songInfo = {
         color: 0x0099ff,
-        title: 'Some title',
+        title: song_info.body.songs[0].name,
         url: 'https://discord.js.org',
         author: {
-          name: 'Some name',
+          name: song_info.body.songs[0].ar[0].name,
           icon_url: 'https://i.imgur.com/wSTFkRM.png',
           url: 'https://discord.js.org',
         },
@@ -37,43 +40,32 @@ module.exports = {
             value: '\u200b',
             inline: false,
           },
-          {
-            name: 'Inline field title',
-            value: 'Some value here',
-            inline: true,
-          },
-          {
-            name: 'Inline field title',
-            value: 'Some value here',
-            inline: true,
-          },
-          {
-            name: 'Inline field title',
-            value: 'Some value here',
-            inline: true,
-          },
         ],
         image: {
           url: 'https://i.imgur.com/wSTFkRM.png',
         },
         timestamp: new Date(),
         footer: {
-          text: 'Some footer text here',
+          text: 'NCMusic Bot',
           icon_url: 'https://i.imgur.com/wSTFkRM.png',
         },
       };
 
-      message.channel.send({ embed: songInfo });
+      await message.channel.send({embed: songInfo});
       dispatcher.on('start', () => {
         console.log('audio.mp3 is now playing!');
       });
 
       dispatcher.on('finish', () => {
         console.log('audio.mp3 has finished playing!');
+        connection.disconnect();
       });
       // Always remember to handle errors appropriately!
       dispatcher.on('error', console.error);
+    } else {
+      await message.reply(
+          'you must be in a voice channel to play a song!');
     }
-    await message.channel.send('Function on development.');
+    await message.channel.send('Function in development.');
   },
 };

@@ -29,7 +29,7 @@ client.once('ready', () => {
 
 // login to Discord with your app's token
 client.login(token);
-
+var stack=[],current_song_id=null;
 client.on('message', async message => {
 
   if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -43,7 +43,7 @@ client.on('message', async message => {
 
   if (!command) return;
   try {
-    await command.execute(message, args);
+    await command.execute(message, args,stack,current_song_id);
   } catch (error) {
     console.error(error);
     await message.reply('there was an error trying to execute that command!');
