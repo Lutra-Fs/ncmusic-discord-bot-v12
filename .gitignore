@@ -119,3 +119,5 @@ dist
 config.json
 
 .idea/
+
+test/ncm.js
