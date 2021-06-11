@@ -33,6 +33,7 @@ module.exports = {
     const song = {
       title: song_info.body.songs[0].name,
       id: target_song_id,
+      artist:song_info.body.songs[0].ar[0].name,
     };
 
     if (!serverQueue) {
@@ -60,7 +61,7 @@ module.exports = {
     } else {
       serverQueue.songs.push(song);
       return message.channel.send(
-          `${song.title} has been added to the queue!`,
+          `${song.title} - ${song.artist} has been added to the queue!`,
       );
     }
   },
@@ -72,16 +73,14 @@ module.exports = {
     return url;
   },
 
-  async play(message, song, queue) {
+  play: async function(message, song, queue) {
     const guild = message.guild;
     const serverQueue = queue.get(message.guild.id);
 
     if (!song) {
-      if (serverQueue.songs.length == 0) {
-        serverQueue.leaveTimer = setTimeout(function() {
-          this.leave_with_timeout(guild.id);
-        }, 5 * 1000); // 20 seconds is for follow question
-      }
+      serverQueue.leaveTimer = await setTimeout(
+          () => { return this.leave(queue, guild.id);}
+          , 20 * 1000);
       return;
     }
     try {
@@ -93,7 +92,6 @@ module.exports = {
     const dispatcher = await serverQueue.connection.play(url).
         on('finish', () => {
           serverQueue.songs.shift();
-          //if(!serverQueue.songs[0])   connection
           this.play(message, serverQueue.songs[0], queue);
         }).
         on('error', error => console.error(error));
@@ -102,7 +100,7 @@ module.exports = {
     const songInfo = await embedMessage.getEmbedMessage(serverQueue);
     await message.channel.send({embed: songInfo});
   },
-  leave_with_timeout: function(guild_id) {
+  leave: function(queue, guild_id) {
     const serverQueue = queue.get(guild_id);
     if (serverQueue) {
       serverQueue.voiceChannel.leave();
