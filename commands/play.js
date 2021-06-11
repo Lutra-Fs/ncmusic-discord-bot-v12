@@ -1,5 +1,5 @@
 const ncmApi = require('NeteaseCloudMusicApi');
-const embedMessage = require('./info.js')
+const embedMessage = require('./info.js');
 module.exports = {
   name: 'play',
   description: 'Play a song from ncm.',
@@ -43,6 +43,7 @@ module.exports = {
         songs: [],
         volume: 5,
         playing: true,
+
       };
 
       queue.set(message.guild.id, curServerQueue);
@@ -76,9 +77,17 @@ module.exports = {
     const serverQueue = queue.get(message.guild.id);
 
     if (!song) {
-      serverQueue.voiceChannel.leave();
-      queue.delete(guild.id);
+      if (serverQueue.songs.length == 0) {
+        serverQueue.leaveTimer = setTimeout(function() {
+          this.leave_with_timeout(guild.id);
+        }, 5 * 1000); // 20 seconds is for follow question
+      }
       return;
+    }
+    try {
+      clearTimeout(serverQueue.leaveTimer);
+    } catch (e) {
+      // there's no leaveTimer
     }
     const url = await this.getURL(song.id);
     const dispatcher = await serverQueue.connection.play(url).
@@ -90,8 +99,15 @@ module.exports = {
         on('error', error => console.error(error));
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
     serverQueue.textChannel.send(`Start playing: **${song.title}**`);
-    const songInfo=await embedMessage.getEmbedMessage(serverQueue);
+    const songInfo = await embedMessage.getEmbedMessage(serverQueue);
     await message.channel.send({embed: songInfo});
   },
-
-};
+  leave_with_timeout: function(guild_id) {
+    const serverQueue = queue.get(guild_id);
+    if (serverQueue) {
+      serverQueue.voiceChannel.leave();
+      queue.delete(guild_id);
+    }
+  },
+}
+;
