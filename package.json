@@ -1,5 +1,5 @@
 {
-  "name": "netease-cloud-music-discord-bot",
+  "name": "ncmusic-discord-bot",
   "version": "1.0.0",
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
