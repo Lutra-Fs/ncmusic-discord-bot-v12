@@ -80,7 +80,7 @@ module.exports = {
     if (!song) {
       serverQueue.leaveTimer = await setTimeout(
           () => { return this.leave(queue, guild.id);}
-          , 20 * 1000);
+          , 60 * 1000);
       return;
     }
     try {

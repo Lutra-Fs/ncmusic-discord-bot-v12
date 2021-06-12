@@ -6,7 +6,7 @@ module.exports = {
   aliases: ['i'],
   execute: async function(message, args, queue) {
     const serverQueue = await queue.get(message.guild.id);
-    let songInfo = await this.getembedmessage(serverQueue);
+    let songInfo = await this.getEmbedMessage(serverQueue);
     message.channel.send({embed: songInfo});
   },
   getEmbedMessage:async function(serverQueue){
