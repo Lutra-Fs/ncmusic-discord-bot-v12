@@ -33,7 +33,7 @@ module.exports = {
     const song = {
       title: song_info.body.songs[0].name,
       id: target_song_id,
-      artist:song_info.body.songs[0].ar[0].name,
+      artist: song_info.body.songs[0].ar[0].name,
     };
 
     if (!serverQueue) {
@@ -42,9 +42,8 @@ module.exports = {
         voiceChannel: voiceChannel,
         connection: null,
         songs: [],
-        volume: 5,
+        volume: 1,
         playing: true,
-
       };
 
       queue.set(message.guild.id, curServerQueue);
@@ -69,7 +68,6 @@ module.exports = {
   getURL: async function(song_id) {
     const link = await ncmApi.song_url({id: song_id, realIP: '211.161.244.70'});
     const url = link.body.data[0].url;
-    console.log(url);
     return url;
   },
 
@@ -89,16 +87,21 @@ module.exports = {
       // there's no leaveTimer
     }
     const url = await this.getURL(song.id);
+    if (url === null) {
+      serverQueue.songs.shift();
+      message.channel.send("Error while getting the playing link, please ensure the song is available. Trying to skip to the next song in the queue.");
+      this.play(message, serverQueue.songs[0], queue);
+    }
     const dispatcher = await serverQueue.connection.play(url).
         on('finish', () => {
           serverQueue.songs.shift();
           this.play(message, serverQueue.songs[0], queue);
         }).
         on('error', error => console.error(error));
-    dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+    dispatcher.setVolumeLogarithmic(serverQueue.volume);
     serverQueue.textChannel.send(`Start playing: **${song.title}**`);
     const songInfo = await embedMessage.getEmbedMessage(serverQueue);
-    await message.channel.send({embed: songInfo});
+    message.channel.send({embed: songInfo});
   },
   leave: function(queue, guild_id) {
     const serverQueue = queue.get(guild_id);

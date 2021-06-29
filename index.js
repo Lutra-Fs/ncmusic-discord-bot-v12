@@ -42,7 +42,7 @@ client.on('message', async message => {
       || client.commands.find(
           cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-  if (!command) return;
+  if (!command) return message.reply('No command found');
   try {
     await command.execute(message, args, queue);
   } catch (error) {

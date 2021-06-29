@@ -9,36 +9,56 @@ module.exports = {
     let songInfo = await this.getEmbedMessage(serverQueue);
     message.channel.send({embed: songInfo});
   },
-  getEmbedMessage:async function(serverQueue){
+  getEmbedMessage: async function(serverQueue) {
     let song_info = await ncmApi.song_detail(
         {ids: serverQueue.songs[0].id.toString()});
+    let singer_detail = await ncmApi.artist_detail(
+        {id: song_info.body.songs[0].ar[0].id});
+    let comment_list = await ncmApi.comment_hot(
+        {id: serverQueue.songs[0].id, type: 0, limit: 1});
     return {
       color: 0x0099ff,
       title: song_info.body.songs[0].name,
       url: 'https://music.163.com/#/song?id=' + serverQueue.songs[0].id,
       author: {
         name: song_info.body.songs[0].ar[0].name,
-        icon_url: 'https://i.imgur.com/wSTFkRM.png',
+        icon_url: singer_detail.body.data.artist.cover,
         url: 'https://music.163.com/#/artist?id=' +
             song_info.body.songs[0].ar[0].id,
       },
-      description: 'Some description here',
+      description: song_info.body.songs[0].al.name,
       thumbnail: {
-        url: 'https://i.imgur.com/wSTFkRM.png',
+        url: singer_detail.body.data.artist.cover,
       },
       fields: [
         {
-          name: 'Regular field title',
-          value: 'Some value here',
+          name: '\"' + comment_list.body.hotComments[0].content + '\"',
+          value: 'From ' + comment_list.body.hotComments[0].user.nickname +
+              ' , ' + comment_list.body.hotComments[0].likedCount + ' like',
         },
         {
           name: '\u200b',
           value: '\u200b',
           inline: false,
         },
+        {
+          name: '** **',
+          value: '** **',
+          inline: true,
+        },
+        {
+          name: '** **',
+          value: '** **',
+          inline: true,
+        },
+        {
+          name: '** **',
+          value: '** **',
+          inline: true,
+        },
       ],
       image: {
-        url: 'https://i.imgur.com/wSTFkRM.png',
+        url: song_info.body.songs[0].al.picUrl + '?param=200y200',
       },
       timestamp: new Date(),
       footer: {
