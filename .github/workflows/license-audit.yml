@@ -29,3 +29,5 @@ jobs:
         # You may pin to the exact commit or the version.
         # uses: JetBrains/qodana-license-audit-action@28cb805bad845f3cd26a8dc9c68af06909bd999b
         uses: JetBrains/qodana-license-audit-action@v2.0-eap
+        with:
+          options: NODE_VERSION="16.6.0"
