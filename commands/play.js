@@ -128,9 +128,8 @@ module.exports = {
         }).
         on('error', error => console.error(error));
     dispatcher.setVolumeLogarithmic(serverQueue.volume);
-    serverQueue.textChannel.send(`Start playing: **${song.title}** - **${song.artist}**`);
     const songInfo = await embedMessage.getEmbedMessage(serverQueue);
-    message.channel.send({embed: songInfo});
+    serverQueue.textChannel.send(`Start playing: **${song.title}** - **${song.artist}**`, {embed: songInfo});
   }
   ,
   leave: function(queue, guild_id) {
