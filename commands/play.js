@@ -22,11 +22,39 @@ module.exports = {
           'I need the permissions to join and speak in your voice channel!',
       );
     }
+    console.log(args[1]);
+    if (args[0] === 'playlist') {
+      if (args[1] === 'id') {
+        let target_playlist_detail = await ncmApi.playlist_detail
+        ({id: parseInt(args[2]), realIP: '211.161.244.70'});
+        console.log(target_playlist_detail);
+        if (target_playlist_detail.status !== 200) {
+          return message.channel.send(
+              target_playlist_detail);
+        } else {
+          let target_infos = target_playlist_detail.body.playlist.trackIds;
+          for (target_ids of target_infos) {
+            console.log(target_ids.id);
+            await this.play_song_id(message, queue, target_ids.id);
+          }
+        }
 
-    // search the song in ncm
-    let search_result = await ncmApi.search(
-        {keywords: args.join(' '), limit: 1, realIP: '211.161.244.70'});
-    let target_song_id = (await search_result).body.result.songs[0].id;
+      } else if (args[1] === 'name') {
+        return message.channel.send(
+            'Function not available!');
+      }
+    } else {
+      let search_result = await ncmApi.search(
+          {keywords: args.join(' '), limit: 1, realIP: '211.161.244.70'});
+      let target_song_id = (await search_result).body.result.songs[0].id;
+      await this.play_song_id(message, queue, target_song_id);
+    }
+  },
+  // search the song in ncm
+
+  play_song_id: async function(message, queue, target_song_id) {
+    const voiceChannel = message.member.voice.channel;
+    const serverQueue = queue.get(message.guild.id);
     let song_info = await ncmApi.song_detail(
         {ids: target_song_id.toString(), realIP: '211.161.244.70'});
 
@@ -69,7 +97,8 @@ module.exports = {
     const link = await ncmApi.song_url({id: song_id, realIP: '211.161.244.70'});
     const url = link.body.data[0].url;
     return url;
-  },
+  }
+  ,
 
   play: async function(message, song, queue) {
     const guild = message.guild;
@@ -89,8 +118,9 @@ module.exports = {
     const url = await this.getURL(song.id);
     if (url === null) {
       serverQueue.songs.shift();
-      message.channel.send("Error while getting the playing link, please ensure the song is available. Trying to skip to the next song in the queue.");
-      this.play(message, serverQueue.songs[0], queue);
+      message.channel.send(
+          'Error while getting the playing link, please ensure the song is available. Trying to skip to the next song in the queue.');
+      await this.play(message, serverQueue.songs[0], queue);
     }
     const dispatcher = await serverQueue.connection.play(url).
         on('finish', () => {
@@ -102,13 +132,15 @@ module.exports = {
     serverQueue.textChannel.send(`Start playing: **${song.title}**`);
     const songInfo = await embedMessage.getEmbedMessage(serverQueue);
     message.channel.send({embed: songInfo});
-  },
+  }
+  ,
   leave: function(queue, guild_id) {
     const serverQueue = queue.get(guild_id);
     if (serverQueue) {
       serverQueue.voiceChannel.leave();
       queue.delete(guild_id);
     }
-  },
+  }
+  ,
 }
 ;
