@@ -22,37 +22,36 @@ module.exports = {
           'I need the permissions to join and speak in your voice channel!',
       );
     }
-    console.log(args[1]);
     if (args[0] === 'playlist') {
       if (args[1] === 'id') {
         let target_playlist_detail = await ncmApi.playlist_detail
         ({id: parseInt(args[2]), realIP: '211.161.244.70'});
-        console.log(target_playlist_detail);
         if (target_playlist_detail.status !== 200) {
           return message.channel.send(
               target_playlist_detail);
         } else {
           let target_infos = target_playlist_detail.body.playlist.trackIds;
+          let target_list_name = target_playlist_detail.body.playlist.name;
           for (target_ids of target_infos) {
-            console.log(target_ids.id);
-            await this.play_song_id(message, queue, target_ids.id);
+            await this.play_song_id(message, queue, target_ids.id, true);
           }
+          return message.channel.send(` **${ target_list_name }** has been add to queue. Note: That does not mean all the song can be played.`)
         }
-
       } else if (args[1] === 'name') {
         return message.channel.send(
             'Function not available!');
       }
     } else {
+      // search the song in ncm
       let search_result = await ncmApi.search(
           {keywords: args.join(' '), limit: 1, realIP: '211.161.244.70'});
       let target_song_id = (await search_result).body.result.songs[0].id;
-      await this.play_song_id(message, queue, target_song_id);
+      await this.play_song_id(message, queue, target_song_id, false);
     }
   },
-  // search the song in ncm
 
-  play_song_id: async function(message, queue, target_song_id) {
+
+  play_song_id: async function(message, queue, target_song_id, list_flag) {
     const voiceChannel = message.member.voice.channel;
     const serverQueue = queue.get(message.guild.id);
     let song_info = await ncmApi.song_detail(
@@ -87,16 +86,16 @@ module.exports = {
       }
     } else {
       serverQueue.songs.push(song);
-      return message.channel.send(
-          `${song.title} - ${song.artist} has been added to the queue!`,
-      );
+      if (!list_flag)
+        return message.channel.send(
+            `**${song.title}** - **${song.artist}** has been added to the queue!`,
+        );
     }
   },
 
   getURL: async function(song_id) {
     const link = await ncmApi.song_url({id: song_id, realIP: '211.161.244.70'});
-    const url = link.body.data[0].url;
-    return url;
+    return link.body.data[0].url;
   }
   ,
 
@@ -129,7 +128,7 @@ module.exports = {
         }).
         on('error', error => console.error(error));
     dispatcher.setVolumeLogarithmic(serverQueue.volume);
-    serverQueue.textChannel.send(`Start playing: **${song.title}**`);
+    serverQueue.textChannel.send(`Start playing: **${song.title}** - **${song.artist}**`);
     const songInfo = await embedMessage.getEmbedMessage(serverQueue);
     message.channel.send({embed: songInfo});
   }
