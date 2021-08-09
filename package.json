@@ -4,6 +4,6 @@
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
     "discord.js": "^13.0.1",
-    "NeteaseCloudMusicApi": "^4.0.17"
+    "NeteaseCloudMusicApi": "^4.0.18"
   }
 }
