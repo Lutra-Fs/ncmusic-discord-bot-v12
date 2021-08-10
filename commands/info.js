@@ -4,19 +4,18 @@ module.exports = {
   name: 'info',
   description: 'get the info of current song',
   aliases: ['i'],
-  execute: async function(message, args, queue) {
+  execute: async function (message, args, queue) {
     const serverQueue = await queue.get(message.guild.id);
     let songInfo = await this.getEmbedMessage(serverQueue);
-    message.channel.send({embed: songInfo});
+    message.channel.send({ embed: songInfo });
   },
-  getEmbedMessage: async function(serverQueue) {
+  getEmbedMessage: async function (serverQueue) {
     let song_info = await ncmApi.song_detail(
-        {ids: serverQueue.songs[0].id.toString()});
-    console.log(song_info.body.songs[0].name);
+      { ids: serverQueue.songs[0].id.toString() });
     let singer_detail = await ncmApi.artist_detail(
-        {id: song_info.body.songs[0].ar[0].id});
+      { id: song_info.body.songs[0].ar[0].id });
     let comment_list = await ncmApi.comment_hot(
-        {id: serverQueue.songs[0].id, type: 0, limit: 1});
+      { id: serverQueue.songs[0].id, type: 0, limit: 1 });
     if (comment_list.body.total === 0) {
       comment_list = {
         body: {
@@ -31,6 +30,10 @@ module.exports = {
         },
       };
     }
+    let comment_content = comment_list.body.hotComments[0].content;
+    if (comment_content.length >= 250) {
+      comment_content = comment_content.substring(0, 250) + '...';
+    }
     return {
       color: 0x0099ff,
       title: song_info.body.songs[0].name,
@@ -39,7 +42,7 @@ module.exports = {
         name: song_info.body.songs[0].ar[0].name,
         icon_url: singer_detail.body.data.artist.cover,
         url: 'https://music.163.com/#/artist?id=' +
-            song_info.body.songs[0].ar[0].id,
+          song_info.body.songs[0].ar[0].id,
       },
       description: song_info.body.songs[0].al.name,
       thumbnail: {
@@ -47,9 +50,9 @@ module.exports = {
       },
       fields: [
         {
-          name: '\"' + comment_list.body.hotComments[0].content + '\"',
+          name: '\"' + comment_content + '\"',
           value: 'From ' + comment_list.body.hotComments[0].user.nickname +
-              ' , ' + comment_list.body.hotComments[0].likedCount + ' like',
+            ' , ' + comment_list.body.hotComments[0].likedCount + ' like',
         },
         {
           name: '\u200b',
@@ -83,4 +86,4 @@ module.exports = {
     };
   },
 }
-;
+  ;
