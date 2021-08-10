@@ -46,8 +46,9 @@ client.on('message', async message => {
     await command.execute(message, args, queue);
   } catch (error) {
     console.error(error);
-    await message.reply('there was an error trying to execute that command!');
+    await message.reply('there was an error trying to execute that command! Submit a Github Issue in https://github.com/lutra-fs/ncmusic-discord-bot/issues with the following error message:');
+    await message.channel.send(error);
+    await message.channel.send('This bot is still in alpha testing and may be unavailable. We are concerning about every issue you met.')
   }
 })
 ;
-

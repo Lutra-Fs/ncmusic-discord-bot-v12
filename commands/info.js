@@ -12,10 +12,25 @@ module.exports = {
   getEmbedMessage: async function(serverQueue) {
     let song_info = await ncmApi.song_detail(
         {ids: serverQueue.songs[0].id.toString()});
+    console.log(song_info.body.songs[0].name);
     let singer_detail = await ncmApi.artist_detail(
         {id: song_info.body.songs[0].ar[0].id});
     let comment_list = await ncmApi.comment_hot(
         {id: serverQueue.songs[0].id, type: 0, limit: 1});
+    if (comment_list.body.total === 0) {
+      comment_list = {
+        body: {
+          hotComments: [
+            {
+              content: 'error on getting hot comment',
+              likedCount: 0,
+              user: {
+                nickname: '--',
+              },
+            }],
+        },
+      };
+    }
     return {
       color: 0x0099ff,
       title: song_info.body.songs[0].name,
@@ -67,4 +82,5 @@ module.exports = {
       },
     };
   },
-};
+}
+;

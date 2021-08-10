@@ -24,23 +24,26 @@ module.exports = {
     }
     if (args[0] === 'playlist') {
       if (args[1] === 'id') {
-        let target_playlist_detail = await ncmApi.playlist_detail
-        ({id: parseInt(args[2]), realIP: '211.161.244.70'});
-        if (target_playlist_detail.status !== 200) {
-          return message.channel.send(
-              target_playlist_detail);
-        } else {
+        try {
+          let target_playlist_detail = await ncmApi.playlist_detail
+          ({id: parseInt(args[2]), realIP: '211.161.244.70'});
           let target_infos = target_playlist_detail.body.playlist.trackIds;
           let target_list_name = target_playlist_detail.body.playlist.name;
           for (target_ids of target_infos) {
             await this.play_song_id(message, queue, target_ids.id, true);
           }
-          return message.channel.send(` **${ target_list_name }** has been add to queue. Note: That does not mean all the song can be played.`)
+          return message.channel.send(
+              ` **${target_list_name}** has been add to queue. Note: That does not mean all the song can be played.`);
+        } catch (e) {
+          return message.channel.send(
+              'Login needed. Currently the bot does not support this feature.');
         }
-      } else if (args[1] === 'name') {
-        return message.channel.send(
-            'Function not available!');
+
       }
+    } else if (args[1] === 'name') {
+      return message.channel.send(
+          'Function not available!');
+
     } else {
       // search the song in ncm
       let search_result = await ncmApi.search(
@@ -49,7 +52,6 @@ module.exports = {
       await this.play_song_id(message, queue, target_song_id, false);
     }
   },
-
 
   play_song_id: async function(message, queue, target_song_id, list_flag) {
     const voiceChannel = message.member.voice.channel;
@@ -91,7 +93,9 @@ module.exports = {
             `**${song.title}** - **${song.artist}** has been added to the queue!`,
         );
     }
-  },
+  }
+
+  ,
 
   getURL: async function(song_id) {
     const link = await ncmApi.song_url({id: song_id, realIP: '211.161.244.70'});
@@ -129,7 +133,9 @@ module.exports = {
         on('error', error => console.error(error));
     dispatcher.setVolumeLogarithmic(serverQueue.volume);
     const songInfo = await embedMessage.getEmbedMessage(serverQueue);
-    serverQueue.textChannel.send(`Start playing: **${song.title}** - **${song.artist}**`, {embed: songInfo});
+    serverQueue.textChannel.send(
+        `Start playing: **${song.title}** - **${song.artist}**`,
+        {embed: songInfo});
   }
   ,
   leave: function(queue, guild_id) {
